@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+:root {
+  --brand-50: #e7f7f5;
+  --brand-100: #d0f0ec;
+  --brand-200: #a8e0d8;
+  --brand-300: #7fd0c4;
+  --brand-400: #57c0b0;
+  --brand-500: #2fb09c;
+  --brand-600: #169c8a;
+  --brand-700: #0d8f81;
+  --brand-800: #0a7368;
+  --brand-900: #07584f;
+  --brand-950: #043c36;
+}
+
+@theme {
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+  --font-body: "Poppins", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.required-input {
+  @apply after:content-['*'] after:text-red-500 after:ml-0.5;
+}
+
+/* Transitions for Sidebar */
+.sidebar {
+  transition: width 0.3s ease;
+}
+.sidebar-expanded {
+  width: 256px;
+} /* w-64 */
+.sidebar-collapsed {
+  width: 80px;
+} /* w-20 */
+
+.menu-text {
+  transition:
+    opacity 0.2s ease,
+    display 0.2s;
+  white-space: nowrap;
+}
+.sidebar-collapsed .menu-text {
+  opacity: 0;
+  display: none;
+}
+.sidebar-expanded .menu-text {
+  opacity: 1;
+  display: inline;
+}
+
+/* Mobile Overlay */
+#mobile-overlay {
+  transition: opacity 0.3s ease;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-krs,
+  #printable-krs * {
+    visibility: visible;
+  }
+  #printable-krs {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .shadow-\[0_2px_10px_-3px_rgba\(6\,81\,237\,0\.1\)\] {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
