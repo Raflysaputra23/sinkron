@@ -11,7 +11,7 @@
                 Portal Mahasiswa
             </h2>
             <p class="mt-2 text-center text-sm text-gray-500">
-                Sistem Informasi KRS Terpadu (SIAKRS)
+                Sistem Informasi KRS Terpadu (SINKRON)
             </p>
         </div>
         <form class="mt-8 space-y-6" action="<?= CONSTANT::DIRNAME ?>login/login" method="POST">

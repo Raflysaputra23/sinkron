@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $data["title"] ?? 'Dashboard' ?> | Siakrs</title>
+    <title><?= $data["title"] ?? 'Dashboard' ?> | Sinkron</title>
     <!-- STYLE CSS -->
     <link rel="stylesheet" href="<?= CONSTANT::DIRNAME ?>/css/output.css">
     <!-- FONT POPPINS -->

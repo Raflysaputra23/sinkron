@@ -9,7 +9,7 @@
             <div class="bg-brand-600 rounded-lg p-1.5 shrink-0">
                 <i class="ph ph-student text-2xl text-white"></i>
             </div>
-            <span class="menu-text font-bold text-xl tracking-wide">SIAKRS</span>
+            <span class="menu-text font-bold text-xl tracking-wide">SINKRON</span>
         </div>
         <button class="lg:hidden text-gray-300 hover:text-white" onclick="toggleMobileSidebar()">
             <i class="ph ph-x text-2xl"></i>

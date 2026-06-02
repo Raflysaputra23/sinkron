@@ -10,7 +10,7 @@
                 Buat Akun Baru
             </h2>
             <p class="mt-2 text-center text-sm text-gray-500">
-                Daftar untuk mengakses SIAKRS
+                Daftar untuk mengakses SINKRON
             </p>
         </div>
         <form class="mt-8 space-y-6" action="<?= CONSTANT::DIRNAME ?>register/register" method="POST">
