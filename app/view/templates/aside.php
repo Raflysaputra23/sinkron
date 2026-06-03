@@ -68,6 +68,12 @@
                 <i class="ph ph-clock-counter-clockwise text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span class="menu-text ml-4 font-medium">Log Simulasi (PDT)</span>
             </a>
+
+            <a href="<?= CONSTANT::DIRNAME ?>backup" 
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Backup Sistem" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                <i class="ph ph-cloud-arrow-up text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
+                <span class="menu-text ml-4 font-medium">Backup & Sinkronisasi</span>
+            </a>
         <?php endif; ?>
 
         <a href="<?= CONSTANT::DIRNAME ?>dashboard/logout"
