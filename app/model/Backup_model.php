@@ -118,23 +118,35 @@ class Backup_model {
 
     private function eksekusiBackup($host, $user, $pass, $name, $pathPenyimpanan) {
         $batPath = dirname(__DIR__, 2) . "/mysqlbackup.bat";
+        $logPath = dirname(__DIR__, 2) . "/public/backups/backup_error.log";
         $success = false;
+
+        // Bersihkan log error lama jika ada
+        if (file_exists($logPath)) {
+            @unlink($logPath);
+        }
 
         // Coba jalankan file .bat terlebih dahulu jika filenya ada
         if (file_exists($batPath)) {
-            $command = "\"{$batPath}\" \"{$user}\" \"{$pass}\" \"{$host}\" \"{$name}\" \"{$pathPenyimpanan}\"";
+            $command = "\"{$batPath}\" \"{$user}\" \"{$pass}\" \"{$host}\" \"{$name}\" \"{$pathPenyimpanan}\" 2>\"{$logPath}\"";
             system($command, $output);
             if ($output === 0) {
                 $success = true;
+                if (file_exists($logPath)) {
+                    @unlink($logPath);
+                }
             }
         }
 
         // Fallback ke command mysqldump langsung jika .bat gagal atau tidak ada
         if (!$success) {
-            $command = "mysqldump --user={$user} --password={$pass} --host={$host} {$name} > {$pathPenyimpanan}";
+            $command = "mysqldump --user={$user} --password={$pass} --host={$host} {$name} > \"{$pathPenyimpanan}\" 2>\"{$logPath}\"";
             system($command, $output);
             if ($output === 0) {
                 $success = true;
+                if (file_exists($logPath)) {
+                    @unlink($logPath);
+                }
             }
         }
 
