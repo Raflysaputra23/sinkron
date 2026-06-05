@@ -1,4 +1,4 @@
-**🚀 SINKRON: Sistem Pemantauan Civitas Akademika**
+**🚀 SINKRON (Sistem Integrasi Penjadwalan & War KRS Terdistribusi)**
 
 Deskripsi 
 
@@ -23,7 +23,7 @@ Foto
 
   SQL
 
-  ''''public function search($data)
+  ```'public function search($data)
     {
         $search = $data['search'];
         $id_user = $data['id_user'];
@@ -71,7 +71,7 @@ Foto
             echo $e->getMessage();
             return [];
         }
-    }'''
+    }```
 
 * Stored Procedure 
   Kami memindahkan logika bisnis dari PHP ke database menggunakan Stored Procedure. Sehingga membuat sistem lebih cepat karena database tidak perlu menunggu         instruksi berulang kali dari aplikasi.
@@ -82,7 +82,7 @@ Foto
 
   PHP
 
-  '''public function getMyKrs()
+  ```public function getMyKrs()
      {
         try {
             $id_user = $_SESSION["id_user"];
@@ -95,11 +95,11 @@ Foto
             echo $e->getMessage();
             return false;
         }
-    }'''
+    }```
 
     PHP 
 
-    '''public function hapusKrs($id_kelas)
+    ```public function hapusKrs($id_kelas)
     {
         try {
             $id_user = $_SESSION["id_user"];
@@ -116,11 +116,11 @@ Foto
             echo $e->getMessage();
             return false;
         }
-    }'''
+    }```
 
     PHP
 
-    '''public function ambilKrs($id_kelas)
+    ```public function ambilKrs($id_kelas)
     {
         $id_user = $_SESSION["id_user"];
 
@@ -133,11 +133,11 @@ Foto
         $this->db->execute();
         $result = $this->db->single();
         return $result["status"];
-    }'''
+    }```
 
     PHP 
 
-    '''public function edit_kelas($data) {
+    ```public function edit_kelas($data) {
         $id_kelas = htmlspecialchars($data['id_kelas']);
         $hari = htmlspecialchars($data['hari']);
         $jam_mulai = htmlspecialchars($data['jam_mulai']);
@@ -164,7 +164,7 @@ Foto
             echo $e->getMessage();
             return false;
         }
-    }'''
+    }```
 
 
 * Database Functions
@@ -195,7 +195,7 @@ Foto
 
     SQL
 
-    '''public function getMahasiswaDosen()
+    ```public function getMahasiswaDosen()
     {
         try {
             $this->db->query("SELECT * FROM getmahasiswadosen");
@@ -205,7 +205,7 @@ Foto
             echo $e->getMessage();
             return false;
         }
-    }'''
+    }```
 
 * Transaction (ACID)
     
@@ -215,7 +215,7 @@ Foto
 
   SQL
 
-  '''public function simulasiDeadlockStream($userNim, $userName, $classes, $userSlot)
+  ```public function simulasiDeadlockStream($userNim, $userName, $classes, $userSlot)
     {
         $maxTries = 3;
         $try = 1;
@@ -275,7 +275,7 @@ Foto
                 }
             }
         }
-    }'''
+    }```
 
 
 📌 Detail Konsep UAP
@@ -303,7 +303,7 @@ Berikut adalah beberapa komponen utama yang digunakan:
 
     SQL
 
-    '''public function jumlahSks()
+    ```public function jumlahSks()
     {
         try {
             $id_user = $_SESSION["id_user"];
@@ -316,11 +316,11 @@ Berikut adalah beberapa komponen utama yang digunakan:
             echo $e->getMessage();
             return false;
         }
-    }'''
+    }```
 
     SQL 
 
-    '''public function search($data)
+    ```public function search($data)
     {
         $search = $data['search'];
         $id_user = $data['id_user'];
@@ -368,7 +368,7 @@ Berikut adalah beberapa komponen utama yang digunakan:
             echo $e->getMessage();
             return [];
         }
-    }'''
+    }```
 
   * Database Trigger: trg_update_krs_log
     
@@ -387,7 +387,7 @@ Untuk menjaga ketersediaan dan keamanan data, sistem ini dilengkapi fitur backup
 
 📄 app/model/Backup_model.php
 
-'''<?php
+```<?php
 
 class Backup_model {
     private Database $db;
@@ -695,11 +695,11 @@ class Backup_model {
         return $hasil;
     }
 }
-'''
+```
 
 📄 app/controller/Backup.php
 
-'''<?php
+```<?php
 
 class Backup extends Controller {
     
@@ -745,10 +745,10 @@ class Backup extends Controller {
         }
     }
 }
-'''
+```
 
 📄 app/view/backup/index.php
-'''<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 lg:p-8">
+```<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 lg:p-8">
     <div class="max-w-7xl mx-auto" id="printable-krs">
         <div class="mb-8 flex flex-col justify-between items-start gap-4">
             <div>
@@ -866,4 +866,4 @@ class Backup extends Controller {
         radioManual.addEventListener('change', toggleInterval);
         radioOtomatis.addEventListener('change', toggleInterval);
     });
-</script>'''
+</script>```
