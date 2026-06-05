@@ -126,30 +126,198 @@ class Backup_model {
             @unlink($logPath);
         }
 
-        // Coba jalankan file .bat terlebih dahulu jika filenya ada
+        // Langkah 1: Coba jalankan file .bat terlebih dahulu jika filenya ada
         if (file_exists($batPath)) {
             $command = "\"{$batPath}\" \"{$user}\" \"{$pass}\" \"{$host}\" \"{$name}\" \"{$pathPenyimpanan}\" 2>\"{$logPath}\"";
             system($command, $output);
             if ($output === 0) {
                 $success = true;
-                if (file_exists($logPath)) {
-                    @unlink($logPath);
-                }
+                if (file_exists($logPath)) @unlink($logPath);
             }
         }
 
-        // Fallback ke command mysqldump langsung jika .bat gagal atau tidak ada
+        // Langkah 2: Fallback ke command mysqldump langsung jika .bat gagal atau tidak ada
         if (!$success) {
             $command = "mysqldump --user={$user} --password={$pass} --host={$host} {$name} > \"{$pathPenyimpanan}\" 2>\"{$logPath}\"";
             system($command, $output);
             if ($output === 0) {
                 $success = true;
-                if (file_exists($logPath)) {
-                    @unlink($logPath);
-                }
+                if (file_exists($logPath)) @unlink($logPath);
             }
+        }
+
+        // Langkah 3: Fallback terakhir - Backup murni PHP via PDO (tidak butuh mysqldump sama sekali!)
+        if (!$success) {
+            if (file_exists($logPath)) @unlink($logPath);
+            $success = $this->backupViaPHP($host, $user, $pass, $name, $pathPenyimpanan);
         }
 
         return $success;
     }
-}
+
+    private function backupViaPHP($host, $user, $pass, $name, $pathPenyimpanan) {
+        try {
+            $pdo = new PDO(
+                "mysql:host={$host};dbname={$name};charset=utf8mb4",
+                $user,
+                $pass,
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            );
+
+            $sql  = "-- ========================================\n";
+            $sql .= "-- Database Backup: {$name}\n";
+            $sql .= "-- Dibuat pada: " . date('Y-m-d H:i:s') . "\n";
+            $sql .= "-- Metode: PHP PDO Native\n";
+            $sql .= "-- ========================================\n\n";
+            $sql .= "SET FOREIGN_KEY_CHECKS=0;\n";
+            $sql .= "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n";
+            $sql .= "SET NAMES utf8mb4;\n\n";
+
+            // Ambil semua tabel (bukan view) dengan urutan dependensi yang benar
+            $tabelStmt = $pdo->query("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
+            $semuaTabel = $tabelStmt->fetchAll(PDO::FETCH_COLUMN);
+
+            // Urutkan tabel berdasarkan dependensi foreign key agar tidak error saat import
+            $tabelTerurut = $this->urutkanTabel($pdo, $semuaTabel, $name);
+
+            // Export setiap tabel: struktur + data
+            foreach ($tabelTerurut as $tabel) {
+                // Struktur tabel
+                $createStmt = $pdo->query("SHOW CREATE TABLE `{$tabel}`");
+                $createRow  = $createStmt->fetch(PDO::FETCH_ASSOC);
+                $createSql  = $createRow['Create Table'];
+
+                $sql .= "-- ------------------------------------------\n";
+                $sql .= "-- Tabel: `{$tabel}`\n";
+                $sql .= "-- ------------------------------------------\n";
+                $sql .= "DROP TABLE IF EXISTS `{$tabel}`;\n";
+                $sql .= $createSql . ";\n\n";
+
+                // Data tabel
+                $dataStmt = $pdo->query("SELECT * FROM `{$tabel}`");
+                $rows = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+                if (!empty($rows)) {
+                    $kolom = array_map(fn($k) => "`{$k}`", array_keys($rows[0]));
+                    $sql .= "INSERT INTO `{$tabel}` (" . implode(', ', $kolom) . ") VALUES\n";
+                    $values = [];
+                    foreach ($rows as $row) {
+                        $escaped = array_map(function($val) use ($pdo) {
+                            if ($val === null) return 'NULL';
+                            return $pdo->quote($val);
+                        }, $row);
+                        $values[] = "(" . implode(', ', $escaped) . ")";
+                    }
+                    $sql .= implode(",\n", $values) . ";\n\n";
+                }
+            }
+
+            // Export semua VIEW sebagai VIEW (bukan tabel)
+            $viewStmt = $pdo->query("SHOW FULL TABLES WHERE Table_type = 'VIEW'");
+            $semuaView = $viewStmt->fetchAll(PDO::FETCH_COLUMN);
+            foreach ($semuaView as $view) {
+                $createStmt = $pdo->query("SHOW CREATE VIEW `{$view}`");
+                $createRow  = $createStmt->fetch(PDO::FETCH_ASSOC);
+                $createSql  = $createRow['Create View'];
+
+                $sql .= "-- ------------------------------------------\n";
+                $sql .= "-- View: `{$view}`\n";
+                $sql .= "-- ------------------------------------------\n";
+                $sql .= "DROP VIEW IF EXISTS `{$view}`;\n";
+                $sql .= $createSql . ";\n\n";
+            }
+
+            // Export semua PROCEDURE
+            $procStmt = $pdo->query("SHOW PROCEDURE STATUS WHERE Db = '{$name}'");
+            $procs = $procStmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($procs as $proc) {
+                $procName = $proc['Name'];
+                $createStmt = $pdo->query("SHOW CREATE PROCEDURE `{$procName}`");
+                $createRow  = $createStmt->fetch(PDO::FETCH_ASSOC);
+                $createSql  = $createRow['Create Procedure'];
+                $sql .= "-- Procedure: `{$procName}`\n";
+                $sql .= "DROP PROCEDURE IF EXISTS `{$procName}`;\n";
+                $sql .= "DELIMITER ;;\n{$createSql};;\nDELIMITER ;\n\n";
+            }
+
+            // Export semua FUNCTION
+            $funcStmt = $pdo->query("SHOW FUNCTION STATUS WHERE Db = '{$name}'");
+            $funcs = $funcStmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($funcs as $func) {
+                $funcName = $func['Name'];
+                $createStmt = $pdo->query("SHOW CREATE FUNCTION `{$funcName}`");
+                $createRow  = $createStmt->fetch(PDO::FETCH_ASSOC);
+                $createSql  = $createRow['Create Function'];
+                $sql .= "-- Function: `{$funcName}`\n";
+                $sql .= "DROP FUNCTION IF EXISTS `{$funcName}`;\n";
+                $sql .= "DELIMITER ;;\n{$createSql};;\nDELIMITER ;\n\n";
+            }
+
+            // Export semua TRIGGER
+            $triggerStmt = $pdo->query("SHOW TRIGGERS FROM `{$name}`");
+            $triggers = $triggerStmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($triggers as $trigger) {
+                $triggerName = $trigger['Trigger'];
+                $sql .= "-- Trigger: `{$triggerName}`\n";
+                $sql .= "DROP TRIGGER IF EXISTS `{$triggerName}`;\n";
+                $sql .= "DELIMITER ;;\n";
+                $sql .= "CREATE TRIGGER `{$triggerName}` {$trigger['Timing']} {$trigger['Event']} ON `{$trigger['Table']}` FOR EACH ROW\n";
+                $sql .= "{$trigger['Statement']};;\n";
+                $sql .= "DELIMITER ;\n\n";
+            }
+
+            $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
+            $sql .= "-- ========================================\n";
+            $sql .= "-- Backup selesai: " . date('Y-m-d H:i:s') . "\n";
+            $sql .= "-- ========================================\n";
+
+            return file_put_contents($pathPenyimpanan, $sql) !== false;
+
+        } catch (Exception $e) {
+            $logPath = dirname(__DIR__, 2) . "/public/backups/backup_error.log";
+            file_put_contents($logPath, "PHP PDO Backup Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function urutkanTabel($pdo, $tabelList, $dbName) {
+        // Buat graf dependensi foreign key antar tabel
+        $dependensi = [];
+        foreach ($tabelList as $tabel) {
+            $dependensi[$tabel] = [];
+        }
+
+        $fkStmt = $pdo->query("
+            SELECT TABLE_NAME, REFERENCED_TABLE_NAME
+            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = '{$dbName}'
+              AND REFERENCED_TABLE_NAME IS NOT NULL
+        ");
+        $fkRows = $fkStmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($fkRows as $fk) {
+            $tabel = $fk['TABLE_NAME'];
+            $ref   = $fk['REFERENCED_TABLE_NAME'];
+            if (isset($dependensi[$tabel]) && $tabel !== $ref) {
+                $dependensi[$tabel][] = $ref;
+            }
+        }
+
+        // Topological sort (Kahn's algorithm)
+        $dikunjungi = [];
+        $hasil = [];
+
+        $kunjungi = function($node) use (&$kunjungi, &$dikunjungi, &$hasil, $dependensi) {
+            if (in_array($node, $dikunjungi)) return;
+            $dikunjungi[] = $node;
+            foreach ($dependensi[$node] ?? [] as $dep) {
+                $kunjungi($dep);
+            }
+            $hasil[] = $node;
+        };
+
+        foreach ($tabelList as $tabel) {
+            $kunjungi($tabel);
+        }
+
+        return $hasil;
+    }
+}
