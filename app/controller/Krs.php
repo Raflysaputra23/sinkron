@@ -9,6 +9,7 @@ class Krs extends Controller
         $data["krs"] = $this->model("Krs_model")->getAllKrs();
         $data["krsDosen"] = $this->model("Krs_model")->getKrsDosen();
         $data["user"] = $this->model("Dashboard_model")->getMyData();
+        $data['statusKrs'] = $this->model("Krs_model")->getStatusKrs();
         $data["jumlahSks"] = $this->model("Krs_model")->jumlahSks();
         $data['dosenPembimbing'] = $this->model("Krs_model")->getDosenPembimbing();
         $data["title"] = "KRS";

@@ -9,7 +9,7 @@ class App {
         $url = $this->parseURL();
         $dir = 'app/controller/';
 
-        if(isset($url[0]) && file_exists($dir.ucfirst($url[0]).'.php')) {
+        if(file_exists($dir.ucfirst($url[0]).'.php')) {
             $this->class = ucfirst($url[0]);
             unset($url[0]);
         }

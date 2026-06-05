@@ -10,8 +10,8 @@ class Backup extends Controller {
         }
 
         $data["user"] = $this->model("Dashboard_model")->getMyData();
-        $data["title"] = "Backup Sistem";
         $data['config'] = $this->model('Backup_model')->getConfig();
+        $data["title"] = "Backup Sistem";
         
         $this->view('templates/header', $data);
         $this->view('templates/aside', $data); 
@@ -25,18 +25,18 @@ class Backup extends Controller {
 
             if ($mode == 'manual') {
                 if ($this->model('Backup_model')->jalankanBackupManual()) {
-                    Flasher::setFlash('berhasil', 'di-backup secara manual');
+                    Flasher::setFlash('Berhasil melakukan backup manual', 'success');
                 } else {
-                    Flasher::setFlash('gagal', 'di-backup');
+                    Flasher::setFlash('Gagal melakukan backup manual', 'error');
                 }
                 header('Location: ' . Constant::DIRNAME . 'backup');
                 exit;
             } else {
                 $interval = $_POST['interval'];
                 if ($this->model('Backup_model')->simpanKonfigurasiOtomatis($interval)) {
-                    Flasher::setFlash('berhasil', 'diatur ke otomatis');
+                    Flasher::setFlash('Berhasil melakukan backup otomatis', 'success');
                 } else {
-                    Flasher::setFlash('gagal', 'diatur');
+                    Flasher::setFlash('Gagal melakukan backup otomatis', 'error');
                 }
                 header('Location: ' . Constant::DIRNAME . 'backup');
                 exit;

@@ -142,7 +142,7 @@
                             </select>
                         </div>
                         <div class="pt-4">
-                            <button type="submit" <?= empty($data['mahasiswa_no_pembimbing']) ? 'disabled' : '' ?> class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition-colors cursor-pointer flex justify-center items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button type="submit" <?= empty($data['mahasiswa_no_pembimbing']) ? 'disabled' : '' ?> class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-lg transition-colors cursor-pointer flex justify-center items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                 <i class="ph ph-user-plus text-lg"></i> Simpan Pembimbing
                             </button>
                         </div>

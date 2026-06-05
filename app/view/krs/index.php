@@ -1,4 +1,4 @@
-<?php 
+<?php
 $showRollback = false;
 $rollbackId = "";
 if (isset($_SESSION["rollback_krs_id"])) {
@@ -9,42 +9,47 @@ if (isset($_SESSION["rollback_krs_id"])) {
 ?>
 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 lg:p-8 relative">
     <?php if ($showRollback): ?>
-    <div id="rollbackKrsPopup" class="fixed bottom-8 right-8 z-50 bg-white border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-xl p-4 flex items-center gap-4 transition-all duration-300 transform translate-y-0 opacity-100 no-print" style="width: 320px;">
-        <div class="flex-1">
-            <h4 class="text-sm font-bold text-gray-800 mb-0.5">Batalkan ambil KRS?</h4>
-            <p class="text-xs text-gray-500 mb-2">Anda dapat membatalkan aksi ini.</p>
-            <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                <div class="bg-brand-500 h-1.5 rounded-full w-full origin-left transition-all duration-75" id="rollbackProgressBar"></div>
+        <div id="rollbackKrsPopup"
+            class="fixed bottom-8 right-8 z-50 bg-white border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-xl p-4 flex items-center gap-4 transition-all duration-300 transform translate-y-0 opacity-100 no-print"
+            style="width: 320px;">
+            <div class="flex-1">
+                <h4 class="text-sm font-bold text-gray-800 mb-0.5">Batalkan ambil KRS?</h4>
+                <p class="text-xs text-gray-500 mb-2">Anda dapat membatalkan aksi ini.</p>
+                <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-brand-500 h-1.5 rounded-full w-full origin-left transition-all duration-75"
+                        id="rollbackProgressBar"></div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="closeRollbackKrs()"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors cursor-pointer">
+                    <i class="ph ph-x text-lg"></i>
+                </button>
+                <a href="<?= CONSTANT::DIRNAME ?>krs/hapusKrs/<?= $rollbackId ?>"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition-colors cursor-pointer">
+                    <i class="ph ph-check text-lg"></i>
+                </a>
             </div>
         </div>
-        <div class="flex items-center gap-2">
-            <button onclick="closeRollbackKrs()" class="w-9 h-9 flex items-center justify-center rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors cursor-pointer">
-                <i class="ph ph-x text-lg"></i>
-            </button>
-            <a href="<?= CONSTANT::DIRNAME ?>krs/hapusKrs/<?= $rollbackId ?>" class="w-9 h-9 flex items-center justify-center rounded-lg bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition-colors cursor-pointer">
-                <i class="ph ph-check text-lg"></i>
-            </a>
-        </div>
-    </div>
-    <script>
-        let rollbackTime = 5;
-        let rollbackInterval = setInterval(() => {
-            rollbackTime -= 0.05;
-            document.getElementById('rollbackProgressBar').style.width = (rollbackTime / 5) * 100 + '%';
-            if (rollbackTime <= 0) {
-                closeRollbackKrs();
-            }
-        }, 50);
+        <script>
+            let rollbackTime = 5;
+            let rollbackInterval = setInterval(() => {
+                rollbackTime -= 0.05;
+                document.getElementById('rollbackProgressBar').style.width = (rollbackTime / 5) * 100 + '%';
+                if (rollbackTime <= 0) {
+                    closeRollbackKrs();
+                }
+            }, 50);
 
-        function closeRollbackKrs() {
-            clearInterval(rollbackInterval);
-            const popup = document.getElementById('rollbackKrsPopup');
-            if (popup) {
-                popup.classList.add('opacity-0', 'translate-y-4');
-                setTimeout(() => popup.remove(), 300);
+            function closeRollbackKrs() {
+                clearInterval(rollbackInterval);
+                const popup = document.getElementById('rollbackKrsPopup');
+                if (popup) {
+                    popup.classList.add('opacity-0', 'translate-y-4');
+                    setTimeout(() => popup.remove(), 300);
+                }
             }
-        }
-    </script>
+        </script>
     <?php endif; ?>
     <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "dosen"): ?>
         <!-- VIEW DOSEN -->
@@ -121,12 +126,24 @@ if (isset($_SESSION["rollback_krs_id"])) {
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             <div class="flex items-center justify-center gap-2">
-                                                <a href="<?= CONSTANT::DIRNAME ?>krs/validasiKrs/<?= $krs['nim'] ?>/disetujui"
-                                                    class="bg-green-100 text-green-700 hover:bg-green-600 hover:text-white rounded-md transition-colors cursor-pointer text-xs font-bold w-8 h-8 flex "><i
-                                                        class="ph ph-check m-auto"></i></a>
-                                                <a href="<?= CONSTANT::DIRNAME ?>krs/validasiKrs/<?= $krs['nim'] ?>/ditolak"
-                                                    class="bg-red-100 text-red-700 hover:bg-red-600 hover:text-white rounded-md transition-colors cursor-pointer text-xs font-bold w-8 h-8 flex"><i
-                                                        class="ph ph-x m-auto"></i></a>
+                                                <?php if ($krs['status'] == 'disetujui'): ?>
+                                                    <button disabled
+                                                        class="bg-green-100 cursor-not-allowed text-green-700 rounded-md transition-colors text-xs font-bold w-8 h-8 flex "><i
+                                                            class="ph ph-check m-auto"></i></button>
+                                                <?php else: ?>
+                                                    <a href="<?= CONSTANT::DIRNAME ?>krs/validasiKrs/<?= $krs['nim'] ?>/disetujui"
+                                                        class="bg-green-100 text-green-700 hover:bg-green-600 hover:text-white rounded-md transition-colors cursor-pointer text-xs font-bold w-8 h-8 flex "><i
+                                                            class="ph ph-check m-auto"></i></a>
+                                                <?php endif; ?>
+                                                <?php if ($krs['status'] == 'ditolak'): ?>
+                                                    <button disabled
+                                                        class="bg-red-100 cursor-not-allowed text-red-700 rounded-md transition-colors text-xs font-bold w-8 h-8 flex"><i
+                                                            class="ph ph-x m-auto"></i></button>
+                                                <?php else: ?>
+                                                    <a href="<?= CONSTANT::DIRNAME ?>krs/validasiKrs/<?= $krs['nim'] ?>/ditolak"
+                                                        class="bg-red-100 text-red-700 hover:bg-red-600 hover:text-white rounded-md transition-colors cursor-pointer text-xs font-bold w-8 h-8 flex"><i
+                                                            class="ph ph-x m-auto"></i></a>
+                                                <?php endif; ?>
                                                 <button data-nama='<?= $krs["nama_mahasiswa"] ?>'
                                                     data-total-sks="<?= $krs['total_sks'] ?> " data-nim='<?= $krs["nim"] ?>'
                                                     data-krs='<?= json_encode($krs["krs"]) ?>' onclick="openModalDetailKrs(this)"
@@ -225,7 +242,7 @@ if (isset($_SESSION["rollback_krs_id"])) {
                 </div>
                 <div class="flex gap-2 no-print">
                     <button onclick="window.print()"
-                        class="bg-blue-500/10 border border-blue-500 text-blue-500 hover:bg-blue-500/30 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors shadow-sm cursor-pointer">
+                        class="bg-teal-500/10 border border-brand-500 text-teal-500 hover:bg-teal-500/30 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors shadow-sm cursor-pointer">
                         <i class="ph ph-printer text-xl"></i> Cetak PDF
                     </button>
                     <button onclick="openModalKrs()"
@@ -238,7 +255,11 @@ if (isset($_SESSION["rollback_krs_id"])) {
             <div
                 class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 overflow-hidden">
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <h2 class="text-lg font-semibold text-gray-800">Daftar Mata Kuliah Diambil</h2>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">Daftar Mata Kuliah Diambil</h2>
+                        <p class="text-xs <?= $data['statusKrs'] == 'menunggu' ? 'bg-red-500/10 text-red-500 ' : 'text-teal-500 bg-teal-500/10' ?> px-1.5 p-1 rounded-lg"><?= $data['statusKrs'] == 'menunggu' ? 'KRS belum disetujui silahkan hubungi dosen pembimbing anda' : 'KRS telah divalidasi' ?></p>
+                    </div>
+                    
                     <div class="text-sm">
                         <span class="text-gray-500">Total SKS:</span>
                         <span class="font-bold text-brand-600 ml-1 text-lg"><?= $data["jumlahSks"]["jumlah_sks"] ?>
@@ -309,8 +330,12 @@ if (isset($_SESSION["rollback_krs_id"])) {
                 <div class="hidden print:flex justify-between items-start mt-12 px-8 pb-8">
                     <div class="text-center">
                         <p class="mb-16 text-sm text-gray-700">Dosen Pembimbing Akademik</p>
-                        <p class="font-bold text-gray-900"><?= isset($data['dosenPembimbing']['nama_lengkap']) ? $data['dosenPembimbing']['nama_lengkap'] : 'Dosen pembimbing belum ada' ?></p>
-                        <p class="text-xs text-gray-500">NIP. <?= isset($data['dosenPembimbing']['nip']) ? $data['dosenPembimbing']['nip'] : 'NIP pembimbing belum ada' ?></p>
+                        <p class="font-bold text-gray-900">
+                            <?= isset($data['dosenPembimbing']['nama_lengkap']) ? $data['dosenPembimbing']['nama_lengkap'] : 'Dosen pembimbing belum ada' ?>
+                        </p>
+                        <p class="text-xs text-gray-500">NIP.
+                            <?= isset($data['dosenPembimbing']['nip']) ? $data['dosenPembimbing']['nip'] : 'NIP pembimbing belum ada' ?>
+                        </p>
                     </div>
                     <div class="text-center">
                         <p class="mb-1 text-sm text-gray-700">Bandar Lampung, <?= date('d F Y') ?></p>
@@ -388,11 +413,14 @@ if (isset($_SESSION["rollback_krs_id"])) {
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">3</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    <div class="font-medium text-gray-800">Kelas <?= substr($krs['id_kelas'], 3, 1) ?></div>
+                                                    <div class="font-medium text-gray-800">Kelas
+                                                        <?= substr($krs['id_kelas'], 3, 1) ?>
+                                                    </div>
                                                     <div class="text-xs"><?= $krs["nama_dosen"] ?></div>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                                                    <span class="text-xs text-gray-500 font-semibold"><?= $krs['sisa_kuota']?> dari <?= $krs['kuota']?></span>
+                                                    <span class="text-xs text-gray-500 font-semibold"><?= $krs['sisa_kuota'] ?> dari
+                                                        <?= $krs['kuota'] ?></span>
                                                     <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1">
                                                         <div class="bg-brand-700 h-1.5 rounded-full"
                                                             style="width: <?= ($krs["kuota"] / $krs["sisa_kuota"]) * 100 ?>%"></div>
@@ -488,6 +516,7 @@ if (isset($_SESSION["rollback_krs_id"])) {
             },
             body: JSON.stringify({ search: el.value, id_user: "<?= $_SESSION['id_user'] ?>" })
         });
+
         const data = await res.json();
         const body = document.getElementById('bodyKrs');
         let template = ``;
@@ -514,7 +543,7 @@ if (isset($_SESSION["rollback_krs_id"])) {
                         ${krs.sisa_kuota} kursi</span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    ${krs.status != 'menunggu' ? `<a href="<?= CONSTANT::DIRNAME ?>krs/ambilKrs/${krs.id_kelas}"
+                    ${krs.status == 'belum diambil' ? `<a href="<?= CONSTANT::DIRNAME ?>krs/ambilKrs/${krs.id_kelas}"
                             class="bg-brand-100 text-brand-700 hover:bg-brand-600 hover:text-white px-3 py-1.5 rounded-md transition-colors cursor-pointer text-xs font-bold">Ambil</a>` : `<span
                             class="bg-red-500 rounded-md text-xs px-3 py-1.5 font-bold text-white">sudah
                             diambil</span>`}

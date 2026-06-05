@@ -203,6 +203,19 @@ class Krs_model
         }
     }
 
+    public function getStatusKrs() {
+        try {
+            $nim = $_SESSION['id_user'];
+            $this->db->query("SELECT status_krs(:nim) as status_krs");
+            $this->db->bind("nim", $nim);
+            $this->db->execute();
+            $result = $this->db->single();
+            return $result['status_krs'];
+        } catch(PDOException $e) {
+            return null;
+        }
+    }
+
     public function validasiKrs($nim, $status)
     {
         $id_user = $_SESSION['id_user'];

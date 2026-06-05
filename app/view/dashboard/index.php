@@ -367,7 +367,7 @@
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr class="text-center text-gray-500">
-                                        <td colspan="4" class="py-10">Tidak ada jadwal <i class="ph ph-magnifying-glass"></i>
+                                        <td colspan="6" class="py-10">Tidak ada jadwal <i class="ph ph-magnifying-glass"></i>
                                         </td>
                                     </tr>
                                 <?php endif; ?>

@@ -10,7 +10,7 @@
 
             <!-- TABEL KELAS (KRS) -->
             <div class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 overflow-hidden mb-8">
-                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-blue-50/50">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-green-50/50">
                     <h2 class="text-lg font-bold text-brand-700 flex items-center gap-2">
                         <i class="ph ph-chalkboard-teacher text-xl"></i> Data Katalog Kelas (KRS)
                     </h2>
@@ -30,7 +30,7 @@
                         <tbody class="bg-white divide-y divide-gray-100">
                             <?php if (count($data["kelas"]) > 0): ?>
                                 <?php foreach ($data["kelas"] as $krs): ?>
-                                    <tr class="hover:bg-blue-50/50 transition-colors">
+                                    <tr class="hover:bg-green-50/50 transition-colors">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900"><?= $krs["id_kelas"] ?></td>
                                         <td class="px-6 py-4 text-sm text-gray-700 font-medium"><?= $krs["nama_mk"] ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"><?= $krs["sks"] ?></td>
@@ -47,9 +47,9 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
                                             <span class="text-xs text-gray-500 font-semibold"><?= $krs['sisa_kuota'] ?> dari <?= $krs['kuota'] ?></span>
                                             <div class="w-full bg-gray-200 rounded-full h-1.5 mb-1 mt-1">
-                                                <div class="bg-blue-500 h-1.5 rounded-full" style="width: <?= ($krs["kuota_terisi"] / $krs["kuota"]) * 100 ?>%"></div>
+                                                <div class="bg-brand-500 h-1.5 rounded-full" style="width: <?= ($krs["kuota_terisi"] / $krs["kuota"]) * 100 ?>%"></div>
                                             </div>
-                                            <span class="text-xs text-blue-600 font-semibold">Tersisa <?= $krs["sisa_kuota"] ?> kursi</span>
+                                            <span class="text-xs text-green-600 font-semibold">Tersisa <?= $krs["sisa_kuota"] ?> kursi</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <div class="flex items-center justify-center gap-2">
@@ -167,7 +167,7 @@
                     <div class="bg-white px-6 py-5 border-b border-gray-100 flex items-start justify-between">
                         <div>
                             <h3 class="text-xl font-bold leading-6 text-gray-900">Edit Data Kelas</h3>
-                            <p class="text-sm text-gray-500 mt-2">Sesuaikan jadwal dan dosen untuk <span id="labelEditKelas" class="font-bold text-blue-600"></span></p>
+                            <p class="text-sm text-gray-500 mt-2">Sesuaikan jadwal dan dosen untuk <span id="labelEditKelas" class="font-bold text-green-600"></span></p>
                         </div>
                         <button onclick="closeModalEditKelas()" class="mt-1 text-gray-400 hover:text-gray-600 cursor-pointer transition">
                             <i class="ph ph-x text-2xl"></i>
@@ -180,7 +180,7 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1 required-input">Dosen Koordinator</label>
-                                    <select name="id_dosen_koor" id="edit_kelas_koor" onchange="handleEditPilihDosenKoor(this)" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow cursor-pointer">
+                                    <select name="id_dosen_koor" id="edit_kelas_koor" onchange="handleEditPilihDosenKoor(this)" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-green-500 focus:border-brand-500 outline-none transition-shadow cursor-pointer">
                                         <option value="">Pilih Dosen</option>
                                         <?php foreach($data['dosen'] as $dosen) : ?>
                                             <option value="<?= $dosen['nip'] ?>"><?= $dosen['nip'] ?> - <?= $dosen['nama_lengkap'] ?></option>
@@ -189,7 +189,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Dosen Pendamping <span class="text-xs text-gray-500">(Opsional)</span></label>
-                                    <select name="id_dosen_pendamping" id="edit_kelas_pendamping" onchange="handleEditPilihDosenPendamping(this)" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow cursor-pointer">
+                                    <select name="id_dosen_pendamping" id="edit_kelas_pendamping" onchange="handleEditPilihDosenPendamping(this)" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-green-500 focus:border-brand-500 outline-none transition-shadow cursor-pointer">
                                         <option value="">Tidak ada Dosen Pendamping</option>
                                         <?php foreach($data['dosen'] as $dosen) : ?>
                                             <option value="<?= $dosen['nip'] ?>"><?= $dosen['nip'] ?> - <?= $dosen['nama_lengkap'] ?></option>
@@ -200,34 +200,34 @@
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Hari</label>
-                                    <select name="hari" id="edit_kelas_hari" required class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow cursor-pointer">
+                                    <select name="hari" id="edit_kelas_hari" required class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-green-500 focus:border-brand-500 outline-none transition-shadow cursor-pointer">
                                         <option value="0">Senin</option><option value="1">Selasa</option><option value="2">Rabu</option><option value="3">Kamis</option><option value="4">Jumat</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Jam Mulai</label>
-                                    <input type="time" name="jam_mulai" id="edit_kelas_mulai" required class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow cursor-pointer">
+                                    <input type="time" name="jam_mulai" id="edit_kelas_mulai" required class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-green-500 focus:border-brand-500 outline-none transition-shadow cursor-pointer">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Jam Selesai</label>
-                                    <input type="time" name="jam_selesai" id="edit_kelas_selesai" required class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow cursor-pointer">
+                                    <input type="time" name="jam_selesai" id="edit_kelas_selesai" required class="w-full bg-white border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-green-500 focus:border-brand-500 outline-none transition-shadow cursor-pointer">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan</label>
-                                    <input type="text" name="ruangan" id="edit_kelas_ruangan" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
+                                    <input type="text" name="ruangan" id="edit_kelas_ruangan" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-green-500 focus:border-brand-500 outline-none transition-shadow">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Kuota Mahasiswa</label>
-                                    <input type="number" min="1" name="kuota" id="edit_kelas_kuota" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
+                                    <input type="number" min="1" name="kuota" id="edit_kelas_kuota" required class="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-green-500 focus:border-brand-500 outline-none transition-shadow">
                                 </div>
                             </div>
                         </div>
                         <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end gap-3 rounded-b-2xl">
                             <button type="button" onclick="closeModalEditKelas()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors cursor-pointer">Batal</button>
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors cursor-pointer flex items-center gap-2"><i class="ph ph-floppy-disk"></i> Simpan Perubahan</button>
+                            <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold hover:bg-brand-700 transition-colors cursor-pointer flex items-center gap-2"><i class="ph ph-floppy-disk"></i> Simpan Perubahan</button>
                         </div>
                     </form>
                 </div>

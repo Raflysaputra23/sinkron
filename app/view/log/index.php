@@ -17,12 +17,12 @@
             <!-- User A -->
             <div
                 class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 overflow-hidden">
-                <div class="p-4 border-b border-gray-100 bg-blue-50/50 flex justify-between items-center">
+                <div class="p-4 border-b border-gray-100 bg-green-50/50 flex justify-between items-center">
                     <div class="w-full">
-                        <label class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-1 block"><i
+                        <label class="text-xs font-bold text-green-700 uppercase tracking-wider mb-1 block"><i
                                 class="ph ph-user text-sm"></i> Simulasi Mahasiswa A</label>
                         <select id="selectUserA" onchange="syncDropdowns()"
-                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
                             <option value="">-- Pilih Mahasiswa --</option>
                         </select>
                     </div>
@@ -188,7 +188,7 @@
         let html = '';
         data.forEach(krs => {
             let color = slot === 'A' ? 'brand' : 'orange';
-            let bgHover = slot === 'A' ? 'blue' : 'orange';
+            let bgHover = slot === 'A' ? 'green' : 'orange';
 
             let disabledAttr = krs.status !== 'belum diambil' ? 'disabled' : '';
             let statusBadge = krs.status !== 'belum diambil' ? `<span class="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs ml-2">${krs.status}</span>` : '';
@@ -228,7 +228,7 @@
         let userBadge = '';
         if (data.userSlot === 'A') {
             const shortName = data.userName ? data.userName.split(' ')[0] : 'USER A';
-            userBadge = `<span class="bg-blue-900/50 border border-blue-800 text-blue-300 px-1.5 py-0.5 rounded text-xs mr-2 relative -top-px whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] inline-block align-bottom" title="${data.userName}">${shortName}</span>`;
+            userBadge = `<span class="bg-green-900/50 border border-brand-800 text-green-300 px-1.5 py-0.5 rounded text-xs mr-2 relative -top-px whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] inline-block align-bottom" title="${data.userName}">${shortName}</span>`;
         }
         if (data.userSlot === 'B') {
             const shortName = data.userName ? data.userName.split(' ')[0] : 'USER B';

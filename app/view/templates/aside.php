@@ -18,14 +18,14 @@
 
     <nav class="flex-1 flex flex-col items-stretch gap-2 overflow-y-auto overflow-x-hidden py-4">
         <a href="<?= CONSTANT::DIRNAME ?>dashboard"
-            class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Dashboard" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+            class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Dashboard" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
             <i class="ph ph-squares-four text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
             <span class="menu-text ml-4 font-medium">Dashboard</span>
         </a>
 
         <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
             <a href="<?= CONSTANT::DIRNAME ?>manajemen"
-                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Manajemen Data" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Manajemen Data" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
                 <i class="ph ph-database text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span class="menu-text ml-4 font-medium">Manajemen Data</span>
             </a>
@@ -33,7 +33,7 @@
 
         <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
             <a href="<?= CONSTANT::DIRNAME ?>akademik"
-                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Data Akademik" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Data Akademik" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
                 <i class="ph ph-folders text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span class="menu-text ml-4 font-medium">Data Akademik</span>
             </a>
@@ -41,7 +41,7 @@
 
         <?php if (isset($_SESSION["role"]) && $_SESSION["role"] != "admin"): ?>
             <a href="<?= CONSTANT::DIRNAME ?>krs"
-                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "KRS" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "KRS" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
                 <i class="ph ph-file-text text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span
                     class="menu-text ml-4 font-medium"><?= (isset($_SESSION["role"]) && $_SESSION["role"] == "dosen") ? "Persetujuan KRS" : "KRS" ?></span>
@@ -50,13 +50,13 @@
 
         <!-- <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "mahasiswa"): ?>
             <a href="<?= CONSTANT::DIRNAME ?>transaksi"
-                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Transaksi" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Transaksi" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
                 <i class="ph ph-credit-card py-0.5 text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span class="menu-text ml-4 font-medium">Transaksi</span>
             </a>
 
             <a href="<?= CONSTANT::DIRNAME ?>laporan"
-                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Laporan View" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Laporan View" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
                 <i class="ph ph-chart-bar text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span class="menu-text ml-4 font-medium">Laporan View</span>
             </a>
@@ -64,13 +64,13 @@
 
         <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
             <a href="<?= CONSTANT::DIRNAME ?>log"
-                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Log Simulasi (PDT)" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Log Simulasi (PDT)" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
                 <i class="ph ph-clock-counter-clockwise text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span class="menu-text ml-4 font-medium">Log Simulasi (PDT)</span>
             </a>
 
             <a href="<?= CONSTANT::DIRNAME ?>backup" 
-                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Backup Sistem" ? "bg-brand-800 text-white border-l-4 border-blue-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-blue-300" ?> transition-colors group relative">
+                class="flex items-center rounded-lg px-4 py-3 <?= $data["title"] == "Backup Sistem" ? "bg-brand-800 text-white border-l-4 border-brand-700" : "text-gray-300 hover:bg-brand-800 hover:text-white border-l-4 border-transparent hover:border-brand-700" ?> transition-colors group relative">
                 <i class="ph ph-cloud-arrow-up text-xl shrink-0 group-hover:scale-110 transition-transform"></i>
                 <span class="menu-text ml-4 font-medium">Backup & Sinkronisasi</span>
             </a>
@@ -95,11 +95,6 @@
             <button class="lg:hidden text-gray-500 hover:text-brand-600 focus:outline-none mr-4"
                 onclick="toggleMobileSidebar()">
                 <i class="ph ph-list text-2xl"></i>
-            </button>
-            <button class="text-gray-400 hover:text-brand-600 transition-colors relative">
-                <i class="ph ph-bell text-xl"></i>
-                <span
-                    class="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow">3</span>
             </button>
         </div>
 
@@ -127,7 +122,7 @@
                         </div>
                     <?php endif; ?>
                 </div>
-                <img src="<?= isset($data["user"]["foto"]) ? $data["user"]["foto"] : 'https://ui-avatars.com/api/?name=' . str_replace(' ', '+', isset($data["user"]["nama_lengkap"]) ? $data["user"]["nama_lengkap"] : $data["user"]['username']) . '&background=2563eb&color=fff&rounded=true' ?>"
+                <img src="<?= isset($data["user"]["foto"]) ? $data["user"]["foto"] : 'https://ui-avatars.com/api/?name=' . str_replace(' ', '+', isset($data["user"]["nama_lengkap"]) ? $data["user"]["nama_lengkap"] : $data["user"]['username']) . '&background=0d8f81&color=fff&rounded=true' ?>"
                     alt="foto <?= isset($data["user"]["nama_lengkap"]) ? $data["user"]["nama_lengkap"] : $data["user"]['username'] ?>"
                     class="h-10 w-10 rounded-full shadow-sm border-2 border-transparent group-hover:border-brand-500 transition-all">
             </div>
