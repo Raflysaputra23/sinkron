@@ -49,12 +49,6 @@
                         Ingat sesi saya
                     </label>
                 </div>
-
-                <div class="text-sm">
-                    <a href="#" class="font-medium text-brand-600 hover:text-brand-500 transition duration-200">
-                        Lupa password?
-                    </a>
-                </div>
             </div>
 
             <div>

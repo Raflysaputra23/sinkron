@@ -79,16 +79,16 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
         }
     }```
 
- * Database Function: jumlah_sks
-  
-    Function ini digunakan untuk menghitung total SKS yang telah diambil oleh seorang mahasiswa. Menggunakan fungsi di level database jauh lebih cepat daripada        menghitung secara manual di sisi PHP.
+* Database Function: jumlah_sks
+
+    Function ini digunakan untuk menghitung total SKS yang telah diambil oleh seorang mahasiswa. Menggunakan fungsi di level database jauh lebih cepat daripada menghitung secara manual di sisi PHP.
 
     Fungsi: Mengembalikan nilai integer total SKS yang sudah diambil.
   
     Kegunaan: Membantu sistem melakukan validasi apakah mahasiswa sudah memenuhi atau melebihi batas SKS.
 
  <div align="center">
-  <img src="asset/function.png" width="800">
+  <img src="asset/function.png" width="800" >
 </div>
 
     SQL
@@ -161,19 +161,19 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
     }```
 
 * Stored Procedure 
-  Kami memindahkan logika bisnis dari PHP ke database menggunakan Stored Procedure. Sehingga membuat sistem lebih cepat karena database tidak perlu menunggu         instruksi berulang kali dari aplikasi.
+    Kami memindahkan logika bisnis dari PHP ke database menggunakan Stored Procedure. Sehingga membuat sistem lebih cepat karena database tidak perlu menunggu instruksi berulang kali dari aplikasi.
   
-  Fungsi: Menjadi untuk INSERT, SELECT, UPDATE, dan DELETE.
+    Fungsi: Menjadi untuk INSERT, SELECT, UPDATE, dan DELETE.
   
-  Manfaat: Memastikan setiap operasi data selalu melalui jalur yang sama, sehingga keamanan dan efisiensi terjamin.
+    Manfaat: Memastikan setiap operasi data selalu melalui jalur yang sama, sehingga keamanan dan efisiensi terjamin.
 
-    <div align="center">
+<div align="center">
   <img src="asset/procedure.png" width="800">
 </div>
 
-  PHP
+    PHP
 
-  ```public function getMyKrs()
+    ```public function getMyKrs()
      {
         try {
             $id_user = $_SESSION["id_user"];
@@ -378,16 +378,16 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
         }
     }```
 
-  * Database Trigger: trg_update_krs_log
+* Database Trigger: trg_update_krs_log
     
     Trigger ini bekerja sebagai "pengawas otomatis" yang berjalan setiap kali ada data baru atau perubahan di tabel KRS.
 
-    * Jika ada data KRS baru yang masuk (insert), sistem mencatat aksi tambah_krs.
-    * Jika data KRS dihapus, sistem mencatat aksi hapus_krs.
+    Jika ada data KRS baru yang masuk (insert), sistem mencatat aksi tambah_krs.
+    Jika data KRS dihapus, sistem mencatat aksi hapus_krs.
     
     Tujuan: Menjaga konsistensi data dan mencatat jejak audit (audit trail) tanpa perlu menulis kode INSERT log setiap kali kita memprogram fitur di PHP.
 
-    <div align="center">
+<div align="center">
   <img src="asset/trigger.png" width="800">
 </div>
 
