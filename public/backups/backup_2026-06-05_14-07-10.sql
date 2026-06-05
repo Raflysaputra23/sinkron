@@ -219,18 +219,30 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trigger_after_insert_krs` AFTER INSERT ON `krs` FOR EACH ROW BEGIN
-    DECLARE new_sks INT;
-
-    SELECT m.sks INTO new_sks 
-    FROM kelas k
-    JOIN matakuliah m ON k.id_mk = m.id_mk
-    WHERE k.id_kelas = NEW.id_kelas;
-
-    UPDATE mahasiswa 
-    SET sks = sks + IFNULL(new_sks, 0)
-    WHERE nim = NEW.nim;
-    
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trigger_after_insert_krs` AFTER INSERT ON `krs` FOR EACH ROW BEGIN
+
+    DECLARE new_sks INT;
+
+
+
+    SELECT m.sks INTO new_sks 
+
+    FROM kelas k
+
+    JOIN matakuliah m ON k.id_mk = m.id_mk
+
+    WHERE k.id_kelas = NEW.id_kelas;
+
+
+
+    UPDATE mahasiswa 
+
+    SET sks = sks + IFNULL(new_sks, 0)
+
+    WHERE nim = NEW.nim;
+
+    
+
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -246,17 +258,28 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trigger_afterr_delete_krs` AFTER DELETE ON `krs` FOR EACH ROW BEGIN
-    DECLARE new_sks INT;
-
-    SELECT m.sks INTO new_sks 
-    FROM kelas k
-    JOIN matakuliah m ON k.id_mk = m.id_mk
-    WHERE k.id_kelas = OLD.id_kelas;
-
-    UPDATE mahasiswa 
-    SET sks = sks - IFNULL(new_sks, 0)
-    WHERE nim = OLD.nim;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trigger_afterr_delete_krs` AFTER DELETE ON `krs` FOR EACH ROW BEGIN
+
+    DECLARE new_sks INT;
+
+
+
+    SELECT m.sks INTO new_sks 
+
+    FROM kelas k
+
+    JOIN matakuliah m ON k.id_mk = m.id_mk
+
+    WHERE k.id_kelas = OLD.id_kelas;
+
+
+
+    UPDATE mahasiswa 
+
+    SET sks = sks - IFNULL(new_sks, 0)
+
+    WHERE nim = OLD.nim;
+
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
