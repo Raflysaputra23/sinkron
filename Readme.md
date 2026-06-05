@@ -4,7 +4,9 @@ Deskripsi
 
 SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk mengelola data mahasiswa, dosen, KRS, serta memastikan keamanan data melalui fitur sinkronisasi dan backup database otomatis.
 
-Foto 
+<div align="center">
+  <img src="asset/dashboardmahasiswa.png" width="800">
+</div>
 
 
 📌 Detail Konsep 
@@ -16,6 +18,10 @@ Foto
   Cara Kerja: Saat login berhasil, sistem menyimpan identitas pengguna di session. Untuk fitur "Ingat Saya" (Remember Me), sistem menyimpan token terenkripsi di     cookie browser pengguna.
 
   Keamanan: Password disimpan menggunakan password_hash untuk memastikan keamanan data sensitif.
+
+  <div align="center">
+  <img src="asset/login.png" width="800">
+</div>
 
 * Join & Set Operations
   
@@ -380,6 +386,10 @@ Berikut adalah beberapa komponen utama yang digunakan:
     Tujuan: Menjaga konsistensi data dan mencatat jejak audit (audit trail) tanpa perlu menulis kode INSERT log setiap kali kita memprogram fitur di PHP.
 
 ☠️ Simulasi Deadlock
+
+<div align="center">
+  <img src="asset/simulasideadlock.png" width="800">
+</div>
 
 💾 Backup Database
 
