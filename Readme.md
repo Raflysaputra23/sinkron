@@ -9,7 +9,7 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
 </div>
 
 
-📌 Detail Konsep 
+📌 Detail Konsep UAP
 
 * Fitur Login & Keamanan
 
@@ -25,7 +25,7 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
 
 * Join & Set Operations
   
-  Kami menggabungkan data dari tabel yang berbeda untuk memberikan informasi lengkap menggunakan INNER JOIN dan LEFT JOIN untuk menghubungkan KRS dengan detail      jadwal mengajar. Selain itu, untuk Set Operations menggunakan UNION untuk menggabungkan data dari berbagai tabel ke dalam satu laporan, memastikan data yang       muncul tidak tumpang tindih.
+  Kami menggabungkan data dari tabel yang berbeda untuk memberikan informasi lengkap menggunakan INNER JOIN dan LEFT JOIN untuk menghubungkan KRS dengan detail      jadwal mengajar. Selain itu, untuk Set Operations menggunakan UNION di get_mahasiswa_dosen untuk menggabungkan data dari berbagai tabel ke dalam satu laporan, memastikan data yang       muncul tidak tumpang tindih.
 
   SQL
 
@@ -172,17 +172,6 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
         }
     }```
 
-
-* Database Functions
-  
-  Kami menggunakan fungsi kustom untuk tugas perhitungan yang sering dipakai.
-  
-  Custom Function: jumlah_sks(nim) dibuat di database untuk menghitung total SKS mahasiswa secara instan.
-
-  Built-in Function: Menggunakan fungsi standar SQL seperti SUM() untuk total SKS dan COALESCE() untuk menangani nilai null pada tabel KRS.
-
-  FOTO
-
 * Database Views
   
   View digunakan untuk menyederhanakan data. Alih-alih menulis query JOIN yang panjang setiap kali ingin menampilkan kelas, kami mengimplementasikan di              get_semua_kelas yang menggabungkan data kelas, dosen, dan mata kuliah.
@@ -199,6 +188,10 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
   
     5\. get_dosen : View khusus untuk menampilkan profil detail dosen beserta jadwal mengajar secara terpadu.
 
+<div align="center">
+  <img src="asset/view.png" width="800">
+</div>
+
     SQL
 
     ```public function getMahasiswaDosen()
@@ -212,6 +205,23 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
             return false;
         }
     }```
+
+* Fragmentasi 
+
+  Kami menerapkan dua teknik fragmentasi untuk optimalisasi kinerja yaitu:
+
+   Fragmentasi Horizontal: Diterapkan pada tabel log berdasarkan rentang waktu untuk memastikan akses data aktivitas terbaru tetap responsif.
+
+<div align="center">
+  <img src="asset/fragmentasihorizontal.png" width="800">
+</div>
+
+   Fragmentasi Vertikal: Diterapkan pada tabel mahasiswa dan dosen dengan memisahkan kolom yang sering diakses dan jarang diakses untuk efisiensi I/O. 
+
+   <div align="center">
+  <img src="asset/fragmentasivertikal.png" width="800">
+</div>
+
 
 * Transaction (ACID)
     
@@ -284,8 +294,7 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
     }```
 
 
-📌 Detail Konsep UAP
-
+📌 SOP Internal
 Stored Procedure, Function, dan Trigger bertindak sebagai "SOP internal" yang menetapkan alur eksekusi operasi penting di level database. Dengan menyimpannya langsung di lapisan database, kita menjamin konsistensi, efisiensi, dan keamanan eksekusi data, terutama dalam sistem multi-user.
 Berikut adalah beberapa komponen utama yang digunakan:
 
@@ -297,7 +306,9 @@ Berikut adalah beberapa komponen utama yang digunakan:
     
     Keamanan: Menghindari race condition karena penguncian data dilakukan di level database (FOR UPDATE).
 
-    
+    <div align="center">
+  <img src="asset/procedure.png" width="800">
+</div>
 
   * Database Function: jumlah_sks
   
@@ -306,6 +317,10 @@ Berikut adalah beberapa komponen utama yang digunakan:
     Fungsi: Mengembalikan nilai integer total SKS yang sudah diambil.
   
     Kegunaan: Membantu sistem melakukan validasi apakah mahasiswa sudah memenuhi atau melebihi batas SKS.
+
+  <div align="center">
+  <img src="function.png" width="800">
+</div>
 
     SQL
 
@@ -384,6 +399,10 @@ Berikut adalah beberapa komponen utama yang digunakan:
     * Jika data KRS dihapus, sistem mencatat aksi hapus_krs.
     
     Tujuan: Menjaga konsistensi data dan mencatat jejak audit (audit trail) tanpa perlu menulis kode INSERT log setiap kali kita memprogram fitur di PHP.
+
+    <div align="center">
+  <img src="asset/trigger.png" width="800">
+</div>
 
 ☠️ Simulasi Deadlock
 
