@@ -54,17 +54,11 @@ if (isset($_SESSION["rollback_krs_id"])) {
     <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "dosen"): ?>
         <!-- VIEW DOSEN -->
         <div class="max-w-7xl mx-auto">
-            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="mb-8 flex flex-col sm:flex-row justify-start items-start sm:items-center gap-4">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">Persetujuan KRS Mahasiswa</h1>
                     <p class="text-sm text-gray-500 mt-1">Kelola dan setujui Kartu Rencana Studi (KRS) mahasiswa bimbingan
                         akademik Anda.</p>
-                </div>
-                <div class="flex gap-2">
-                    <button
-                        class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer text-sm shadow-sm flex items-center gap-2">
-                        <i class="ph ph-funnel"></i> Filter Status
-                    </button>
                 </div>
             </div>
 
