@@ -25,7 +25,7 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
 
 * Join & Set Operations
   
-  Kami menggabungkan data dari tabel yang berbeda untuk memberikan informasi lengkap menggunakan INNER JOIN dan LEFT JOIN untuk menghubungkan KRS dengan detail      jadwal mengajar. Selain itu, untuk Set Operations menggunakan UNION di get_mahasiswa_dosen untuk menggabungkan data dari berbagai tabel ke dalam satu laporan, memastikan data yang       muncul tidak tumpang tindih.
+  Kami menggabungkan data dari tabel yang berbeda untuk memberikan informasi lengkap menggunakan INNER JOIN dan LEFT JOIN untuk menghubungkan KRS dengan detail      jadwal mengajar. Selain itu, untuk Set Operations menggunakan UNION di getmahasiswadosen dan getdosenpembimbing untuk menggabungkan data dari berbagai tabel ke dalam satu laporan, memastikan data yang       muncul tidak tumpang tindih.
 
   SQL
 
@@ -79,12 +79,97 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
         }
     }```
 
+ * Database Function: jumlah_sks
+  
+    Function ini digunakan untuk menghitung total SKS yang telah diambil oleh seorang mahasiswa. Menggunakan fungsi di level database jauh lebih cepat daripada        menghitung secara manual di sisi PHP.
+
+    Fungsi: Mengembalikan nilai integer total SKS yang sudah diambil.
+  
+    Kegunaan: Membantu sistem melakukan validasi apakah mahasiswa sudah memenuhi atau melebihi batas SKS.
+
+ <div align="center">
+  <img src="asset/function.png" width="800">
+</div>
+
+    SQL
+
+    ```public function jumlahSks()
+    {
+        try {
+            $id_user = $_SESSION["id_user"];
+            $this->db->query("select jumlah_sks(:id_user) as jumlah_sks");
+            $this->db->bind("id_user", $id_user);
+            $this->db->execute();
+            $this->db->closeCursor();
+            return $this->db->single();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return false;
+        }
+    }```
+
+    SQL 
+
+    ```public function search($data)
+    {
+        $search = $data['search'];
+        $id_user = $data['id_user'];
+
+        try {
+            $this->db->query('SELECT 
+        m.nim,
+        m.nama_lengkap AS nama_mahasiswa,
+        mk.id_mk,
+        mk.nama_mk,
+        mk.sks,
+        kls.id_kelas,
+        kls.hari,
+        kls.jam_mulai,
+        kls.jam_selesai,
+        kls.ruangan,
+        kls.kuota,
+        d.nama_lengkap AS nama_dosen,
+        COALESCE(k.status, "belum diambil") AS status,
+        k.updated_at,
+        (
+            SELECT COUNT(*) 
+            FROM krs k2 
+            WHERE k2.id_kelas = kls.id_kelas
+        ) AS kuota_terisi,
+        (
+            kls.kuota - (
+                SELECT COUNT(*) 
+                FROM krs k3 
+                WHERE k3.id_kelas = kls.id_kelas
+            )
+        ) AS sisa_kuota
+    FROM kelas kls
+    JOIN matakuliah mk ON kls.id_mk = mk.id_mk
+    JOIN dosen d ON kls.id_dosen_koor = d.nip
+    JOIN mahasiswa m ON m.nim = :nim
+    LEFT JOIN krs k 
+        ON k.id_kelas = kls.id_kelas 
+        AND k.nim = :nim WHERE mk.nama_mk LIKE :nama_mk');
+            $this->db->bind('nim', $id_user);
+            $this->db->bind('nama_mk', '%' . $search . '%');
+            $this->db->execute();
+            return $this->db->resultSet();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return [];
+        }
+    }```
+
 * Stored Procedure 
   Kami memindahkan logika bisnis dari PHP ke database menggunakan Stored Procedure. Sehingga membuat sistem lebih cepat karena database tidak perlu menunggu         instruksi berulang kali dari aplikasi.
   
-  Fungsi: Menjadi "SOP" untuk INSERT, SELECT, UPDATE, dan DELETE.
+  Fungsi: Menjadi untuk INSERT, SELECT, UPDATE, dan DELETE.
   
   Manfaat: Memastikan setiap operasi data selalu melalui jalur yang sama, sehingga keamanan dan efisiensi terjamin.
+
+    <div align="center">
+  <img src="asset/procedure.png" width="800">
+</div>
 
   PHP
 
@@ -174,15 +259,15 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
 
 * Database Views
   
-  View digunakan untuk menyederhanakan data. Alih-alih menulis query JOIN yang panjang setiap kali ingin menampilkan kelas, kami mengimplementasikan di              get_semua_kelas yang menggabungkan data kelas, dosen, dan mata kuliah.
+  View digunakan untuk menyederhanakan data. Alih-alih menulis query JOIN yang panjang setiap kali ingin menampilkan kelas, kami mengimplementasikan di              getmahasiswadosen yang menggabungkan data kelas, dosen, dan mata kuliah.
 
-  Selain di get_semua_kelas kami juga mengimplementasikan materi views di beberapa bagian berikut :
+  Selain di getmahasiswadosen kami juga mengimplementasikan materi views di beberapa bagian berikut :
   
     1\. view_user_akademik : Menggabungkan data mahasiswa dan dosen menggunakan UNION ALL untuk menampilkan daftar seluruh pengguna dalam satu akses data.
   
     2\. get_mk : Menyediakan daftar mata kuliah yang sudah bersih untuk diakses oleh modul manajemen.
   
-    3\. getmahasiswadosen : Menggabungkan data rekapitulasi daftar mahasiswa dan dosen untuk tampilan dashboard utama.
+    3\. get_semua_kelas: Menggabungkan data rekapitulasi daftar mahasiswa dan dosen untuk tampilan dashboard utama.
   
     4\. get_admin : View khusus untuk menarik statistik data (jumlah mahasiswa, dosen, MK, dan kelas) agar dashboard admin lebih responsif.
   
@@ -210,13 +295,13 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
 
   Kami menerapkan dua teknik fragmentasi untuk optimalisasi kinerja yaitu:
 
-   Fragmentasi Horizontal: Diterapkan pada tabel log berdasarkan rentang waktu untuk memastikan akses data aktivitas terbaru tetap responsif.
+   1\.Fragmentasi Horizontal: Diterapkan pada tabel log berdasarkan rentang waktu untuk memastikan akses data aktivitas terbaru tetap responsif.
 
 <div align="center">
   <img src="asset/fragmentasihorizontal.png" width="800">
 </div>
 
-   Fragmentasi Vertikal: Diterapkan pada tabel mahasiswa dan dosen dengan memisahkan kolom yang sering diakses dan jarang diakses untuk efisiensi I/O. 
+   2\.Fragmentasi Vertikal: Diterapkan pada tabel mahasiswa dan dosen dengan memisahkan kolom yang sering diakses dan jarang diakses untuk efisiensi I/O. 
 
    <div align="center">
   <img src="asset/fragmentasivertikal.png" width="800">
@@ -290,104 +375,6 @@ SINKRON adalah sistem manajemen akademik berbasis web yang dirancang untuk menge
                     return;
                 }
             }
-        }
-    }```
-
-
-📌 SOP Internal
-Stored Procedure, Function, dan Trigger bertindak sebagai "SOP internal" yang menetapkan alur eksekusi operasi penting di level database. Dengan menyimpannya langsung di lapisan database, kita menjamin konsistensi, efisiensi, dan keamanan eksekusi data, terutama dalam sistem multi-user.
-Berikut adalah beberapa komponen utama yang digunakan:
-
-  * Stored Procedure: ambil_krs
-    
-    Procedure ini berfungsi sebagai SOP untuk memproses pengambilan KRS mahasiswa. Prosedur ini memastikan bahwa pengecekan kuota dan penambahan data dilakukan        dalam satu transaksi yang aman.
-
-    Fungsi: Menjamin bahwa proses INSERT KRS hanya terjadi jika kuota masih tersedia.
-    
-    Keamanan: Menghindari race condition karena penguncian data dilakukan di level database (FOR UPDATE).
-
-    <div align="center">
-  <img src="asset/procedure.png" width="800">
-</div>
-
-  * Database Function: jumlah_sks
-  
-    Function ini digunakan untuk menghitung total SKS yang telah diambil oleh seorang mahasiswa. Menggunakan fungsi di level database jauh lebih cepat daripada        menghitung secara manual di sisi PHP.
-
-    Fungsi: Mengembalikan nilai integer total SKS yang sudah diambil.
-  
-    Kegunaan: Membantu sistem melakukan validasi apakah mahasiswa sudah memenuhi atau melebihi batas SKS.
-
-  <div align="center">
-  <img src="function.png" width="800">
-</div>
-
-    SQL
-
-    ```public function jumlahSks()
-    {
-        try {
-            $id_user = $_SESSION["id_user"];
-            $this->db->query("select jumlah_sks(:id_user) as jumlah_sks");
-            $this->db->bind("id_user", $id_user);
-            $this->db->execute();
-            $this->db->closeCursor();
-            return $this->db->single();
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return false;
-        }
-    }```
-
-    SQL 
-
-    ```public function search($data)
-    {
-        $search = $data['search'];
-        $id_user = $data['id_user'];
-
-        try {
-            $this->db->query('SELECT 
-        m.nim,
-        m.nama_lengkap AS nama_mahasiswa,
-        mk.id_mk,
-        mk.nama_mk,
-        mk.sks,
-        kls.id_kelas,
-        kls.hari,
-        kls.jam_mulai,
-        kls.jam_selesai,
-        kls.ruangan,
-        kls.kuota,
-        d.nama_lengkap AS nama_dosen,
-        COALESCE(k.status, "belum diambil") AS status,
-        k.updated_at,
-        (
-            SELECT COUNT(*) 
-            FROM krs k2 
-            WHERE k2.id_kelas = kls.id_kelas
-        ) AS kuota_terisi,
-        (
-            kls.kuota - (
-                SELECT COUNT(*) 
-                FROM krs k3 
-                WHERE k3.id_kelas = kls.id_kelas
-            )
-        ) AS sisa_kuota
-    FROM kelas kls
-    JOIN matakuliah mk ON kls.id_mk = mk.id_mk
-    JOIN dosen d ON kls.id_dosen_koor = d.nip
-    JOIN mahasiswa m ON m.nim = :nim
-    LEFT JOIN krs k 
-        ON k.id_kelas = kls.id_kelas 
-        AND k.nim = :nim WHERE mk.nama_mk LIKE :nama_mk');
-            $this->db->bind('nim', $id_user);
-            $this->db->bind('nama_mk', '%' . $search . '%');
-            $this->db->execute();
-            return $this->db->resultSet();
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return [];
         }
     }```
 
