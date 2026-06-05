@@ -93,7 +93,6 @@ class Backup_model {
     }
 
     public function jalankanBackupOtomatis() {
-        // Lock last_backup immediately to prevent concurrent requests from triggering multiple backups
         $currentDatetime = date('Y-m-d H:i:s');
         $this->db->query("UPDATE konfigurasi_backup SET last_backup = :last_backup WHERE id = 1");
         $this->db->bind('last_backup', $currentDatetime);
@@ -121,12 +120,10 @@ class Backup_model {
         $logPath = dirname(__DIR__, 2) . "/public/backups/backup_error.log";
         $success = false;
 
-        // Bersihkan log error lama jika ada
         if (file_exists($logPath)) {
             @unlink($logPath);
         }
 
-        // Langkah 1: Coba jalankan file .bat terlebih dahulu jika filenya ada
         if (file_exists($batPath)) {
             $command = "\"{$batPath}\" \"{$user}\" \"{$pass}\" \"{$host}\" \"{$name}\" \"{$pathPenyimpanan}\" 2>\"{$logPath}\"";
             system($command, $output);
@@ -136,7 +133,6 @@ class Backup_model {
             }
         }
 
-        // Langkah 2: Fallback ke command mysqldump langsung jika .bat gagal atau tidak ada
         if (!$success) {
             $command = "mysqldump --user={$user} --password={$pass} --host={$host} {$name} > \"{$pathPenyimpanan}\" 2>\"{$logPath}\"";
             system($command, $output);
@@ -146,7 +142,6 @@ class Backup_model {
             }
         }
 
-        // Langkah 3: Fallback terakhir - Backup murni PHP via PDO (tidak butuh mysqldump sama sekali!)
         if (!$success) {
             if (file_exists($logPath)) @unlink($logPath);
             $success = $this->backupViaPHP($host, $user, $pass, $name, $pathPenyimpanan);
@@ -173,16 +168,12 @@ class Backup_model {
             $sql .= "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n";
             $sql .= "SET NAMES utf8mb4;\n\n";
 
-            // Ambil semua tabel (bukan view) dengan urutan dependensi yang benar
             $tabelStmt = $pdo->query("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
             $semuaTabel = $tabelStmt->fetchAll(PDO::FETCH_COLUMN);
 
-            // Urutkan tabel berdasarkan dependensi foreign key agar tidak error saat import
             $tabelTerurut = $this->urutkanTabel($pdo, $semuaTabel, $name);
 
-            // Export setiap tabel: struktur + data
             foreach ($tabelTerurut as $tabel) {
-                // Struktur tabel
                 $createStmt = $pdo->query("SHOW CREATE TABLE `{$tabel}`");
                 $createRow  = $createStmt->fetch(PDO::FETCH_ASSOC);
                 $createSql  = $createRow['Create Table'];
@@ -211,7 +202,6 @@ class Backup_model {
                 }
             }
 
-            // Export semua VIEW sebagai VIEW (bukan tabel)
             $viewStmt = $pdo->query("SHOW FULL TABLES WHERE Table_type = 'VIEW'");
             $semuaView = $viewStmt->fetchAll(PDO::FETCH_COLUMN);
             foreach ($semuaView as $view) {
@@ -226,7 +216,6 @@ class Backup_model {
                 $sql .= $createSql . ";\n\n";
             }
 
-            // Export semua PROCEDURE
             $procStmt = $pdo->query("SHOW PROCEDURE STATUS WHERE Db = '{$name}'");
             $procs = $procStmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($procs as $proc) {
@@ -239,7 +228,6 @@ class Backup_model {
                 $sql .= "DELIMITER ;;\n{$createSql};;\nDELIMITER ;\n\n";
             }
 
-            // Export semua FUNCTION
             $funcStmt = $pdo->query("SHOW FUNCTION STATUS WHERE Db = '{$name}'");
             $funcs = $funcStmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($funcs as $func) {
@@ -252,7 +240,6 @@ class Backup_model {
                 $sql .= "DELIMITER ;;\n{$createSql};;\nDELIMITER ;\n\n";
             }
 
-            // Export semua TRIGGER
             $triggerStmt = $pdo->query("SHOW TRIGGERS FROM `{$name}`");
             $triggers = $triggerStmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($triggers as $trigger) {
@@ -280,7 +267,6 @@ class Backup_model {
     }
 
     private function urutkanTabel($pdo, $tabelList, $dbName) {
-        // Buat graf dependensi foreign key antar tabel
         $dependensi = [];
         foreach ($tabelList as $tabel) {
             $dependensi[$tabel] = [];
@@ -301,7 +287,6 @@ class Backup_model {
             }
         }
 
-        // Topological sort (Kahn's algorithm)
         $dikunjungi = [];
         $hasil = [];
 
@@ -320,4 +305,4 @@ class Backup_model {
 
         return $hasil;
     }
-}
+}
