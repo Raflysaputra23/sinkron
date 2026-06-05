@@ -34,10 +34,8 @@ class Backup_model {
         }
 
         $pathPenyimpanan = $folderPenyimpanan . $namaFile;
-        $command = "mysqldump --user={$user} --password={$pass} --host={$host} {$name} > {$pathPenyimpanan}";
         
-        system($command, $output);
-        if ($output === 0) {
+        if ($this->eksekusiBackup($host, $user, $pass, $name, $pathPenyimpanan)) {
             $currentDatetime = date('Y-m-d H:i:s');
             $this->db->query("UPDATE konfigurasi_backup SET mode = 'manual', last_backup = :last_backup WHERE id = 1");
             $this->db->bind('last_backup', $currentDatetime);
@@ -95,6 +93,7 @@ class Backup_model {
     }
 
     public function jalankanBackupOtomatis() {
+        // Lock last_backup immediately to prevent concurrent requests from triggering multiple backups
         $currentDatetime = date('Y-m-d H:i:s');
         $this->db->query("UPDATE konfigurasi_backup SET last_backup = :last_backup WHERE id = 1");
         $this->db->bind('last_backup', $currentDatetime);
@@ -113,9 +112,32 @@ class Backup_model {
         }
 
         $pathPenyimpanan = $folderPenyimpanan . $namaFile;
-        $command = "mysqldump --user={$user} --password={$pass} --host={$host} {$name} > {$pathPenyimpanan}";
         
-        system($command, $output);
-        return ($output === 0);
+        return $this->eksekusiBackup($host, $user, $pass, $name, $pathPenyimpanan);
+    }
+
+    private function eksekusiBackup($host, $user, $pass, $name, $pathPenyimpanan) {
+        $batPath = dirname(__DIR__, 2) . "/mysqlbackup.bat";
+        $success = false;
+
+        // Coba jalankan file .bat terlebih dahulu jika filenya ada
+        if (file_exists($batPath)) {
+            $command = "\"{$batPath}\" \"{$user}\" \"{$pass}\" \"{$host}\" \"{$name}\" \"{$pathPenyimpanan}\"";
+            system($command, $output);
+            if ($output === 0) {
+                $success = true;
+            }
+        }
+
+        // Fallback ke command mysqldump langsung jika .bat gagal atau tidak ada
+        if (!$success) {
+            $command = "mysqldump --user={$user} --password={$pass} --host={$host} {$name} > {$pathPenyimpanan}";
+            system($command, $output);
+            if ($output === 0) {
+                $success = true;
+            }
+        }
+
+        return $success;
     }
 }
